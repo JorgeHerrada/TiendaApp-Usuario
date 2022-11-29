@@ -22,27 +22,76 @@ export default class SignIn extends Component {
     super(props);
     this.state = {
         // variables definition
-        username:"",
+        email:"",
         password:"",
         password2:"",
+        name:"",
+        lastName1:"",
+        lastName2:"",
+        picture:"",
     };
   }
 
   render() {
     // js programming for objects
-    const btnClick = () => {
+    const registro = () => {
+        let _this = this;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            console.log("Alta enviada al servidor");
+            if (this.readyState == 4 && this.status == 200) {
+                console.log("Respuesta: " + xhttp.responseText);
+                if(xhttp.responseText == "1"){
+                    // desplegar alerta
+                    Alert.alert(
+                        "Alta Exitosa",
+                        "Te has registrado satisfactoriamente.",
+                        [{ text: "OK"}]
+                    );
+                    _this.props.navigation.navigate("Login");
+                }
+                else{
+                    // desplegar alerta
+                    Alert.alert(
+                        "¡Error!",
+                        "No se ha podido realizar el registro. Intenta de nuevo.",
+                        [{ text: "OK"}]
+                    );
+                    console.log("No se pudo completar la insecion en la DB.");
+                }
+                
+            
+            }
+        };
+        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/altasUsuarios.php?email="+this.state.email+"&password="+this.state.password+"&name="+this.state.name+"&lastName1="+this.state.lastName1+"&lastName2="+this.state.lastName2+"&picture="+this.state.picture, true);
+        xhttp.send();
+    }
+
+    const btnClickRegresar = () => {
         this.props.navigation.navigate("Login")
     }
     
-    // Display pop up alert 
-    const badLoginalert = () =>
-    Alert.alert(
-        "Login invalido",
-        "Los datos introducidos son inválidos, intenta de nuevo.",
-        [
-            { text: "OK"}
-        ]
-    );
+    const validacion = () => {
+        if(this.state.email==""||this.state.password==""||this.state.name==""||this.state.lastName1==""||this.state.lastName2==""){
+            // desplegar alerta
+            Alert.alert(
+                "ERROR",
+                "Por favor ingresa tu información para registrarte.",
+                [{ text: "OK"}]
+            );
+        }
+        else if(!(this.state.password === this.state.password2)){
+            // desplegar alerta
+            Alert.alert(
+                "ERROR",
+                "Las contraseñas no coinciden, intenta de nuevo.",
+                [{ text: "OK"}]
+            );
+        }else{
+            registro();
+        }
+    }
+
     
     
     return (
@@ -58,39 +107,62 @@ export default class SignIn extends Component {
                     <TextInput 
                         style={styles.input}
                         placeholder="Correo"
-                        keyboardType='numeric'
-                        // get input and save in var username
-                        onChangeText={username => this.setState({username})}
+                        placeholderTextColor={"black"}
+                        // get input and save in var email
+                        onChangeText={email => this.setState({email})}
                     />
                     <TextInput 
+                        placeholderTextColor={"black"}
                         placeholder="Contraseña"
                         style={styles.input}
                         secureTextEntry={true}
                         onChangeText={password => this.setState({password})}
-                    />
+                        />
                     <TextInput 
+                        placeholderTextColor={"black"}
                         placeholder="Confirma tu contraseña"
                         style={styles.input}
                         secureTextEntry={true}
                         onChangeText={password2 => this.setState({password2})}
                     />
+                    <TextInput 
+                        style={styles.input}
+                        placeholder="Nombre"
+                        placeholderTextColor={"black"}
+                        // get input and save in var username
+                        onChangeText={name => this.setState({name})}
+                    />
+                    <TextInput 
+                        style={styles.input}
+                        placeholder="Apellido Paterno"
+                        placeholderTextColor={"black"}
+                        // get input and save in var username
+                        onChangeText={lastName1 => this.setState({lastName1})}
+                    />
+                    <TextInput 
+                        style={styles.input}
+                        placeholder="Apellido Materno"
+                        placeholderTextColor={"black"}
+                        // get input and save in var username
+                        onChangeText={lastName2 => this.setState({lastName2})}
+                    />
                     
-                    <TouchableOpacity
-                        style={styles.btnEntrar}
-                        activeOpacity={0.7}
-                        onPress={btnClick}
-                    > 
-                        <Text style={styles.textoBoton}> Entrar </Text>
-                    </TouchableOpacity>
                 </View>
                 <View style={styles.espacioFooter}>
-                    {/* <TouchableOpacity 
-                        style={styles.btnespacioFooter}
+                    <TouchableOpacity 
+                        style={styles.btnFooter}
                         activeOpacity={0.7}
+                        onPress={btnClickRegresar}
                     >
-                        <Text>¿Aún no tienes una cuenta?</Text>
-                        <Text style={{fontWeight:"bold"}}>¡Regístrate aquí!</Text>
-                    </TouchableOpacity> */}
+                        <Text style={styles.textoFooter}>Regresar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.btnFooter}
+                        activeOpacity={0.7}
+                        onPress={validacion}
+                    >
+                        <Text style={styles.textoFooter}>Registrarme</Text>
+                    </TouchableOpacity>
                 </View>
             </ImageBackground> 
         </SafeAreaView>
@@ -109,14 +181,15 @@ const styles = StyleSheet.create({
         top: 0,
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+        flex:1,
     },
     btnEntrar:{
-        width:"45%",
+        width:"50%",
         height: "12%",
         alignSelf: "center",
         marginTop: 20,
-        backgroundColor:"#2081C3",
-        borderWidth:2,
+        backgroundColor:"#78D5D7",
+        // borderWidth:2,
         borderRadius: 8,
         justifyContent:"center",
         alignItems:"center",        
@@ -127,11 +200,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginHorizontal: 30,
         borderRadius: 8,
+        color:"black",
     },
     textoTitulo:{
         fontWeight:"bold",
         fontSize: 40,
-        color: "#000",
+        color: "#F7F9F9",
         textAlign: "center",
         fontFamily:"arial",
     },
@@ -142,17 +216,29 @@ const styles = StyleSheet.create({
         
     },
     espacioTitulo:{
-        flex: 1,
+        flex: 3,
         justifyContent:"center",
+        backgroundColor:"#63D2FF"
     },
     espacioRegistro:{
-        flex: 1.8,
+        flex: 15,
     },
     espacioFooter:{
-        flex:0.2,
-        justifyContent:"center",
+        flex:2,
+        backgroundColor:"#2081C3",
+        flexDirection:"row",
+        // borderTopWidth:1,
     }, 
-    btnespacioFooter:{
+    btnFooter:{
+        flex:1,
+        justifyContent:"center",
         alignItems:"center",
-    }
+        // borderRightWidth:1,
+        // borderLeftWidth:1,
+    },
+    textoFooter:{
+        fontSize:30,
+        fontWeight:"bold",
+        color:"#F7F9F9"
+    },
 })

@@ -29,10 +29,10 @@ export default class Login extends Component {
   render() {
     // js programming for objects
     const btnClickEntrar = () => {
-        this.props.navigation.navigate("Tienda")
+        this.props.navigation.navigate("Tienda");
     }
     const btnClickRegistro = () => {
-        this.props.navigation.navigate("SignIn")
+        this.props.navigation.navigate("SignIn");
     }
     
     // Display pop up alert 
@@ -59,11 +59,12 @@ export default class Login extends Component {
                     <TextInput 
                         style={styles.input}
                         placeholder="Correo"
-                        keyboardType='numeric'
+                        placeholderTextColor={"black"}
                         // get input and save in var username
                         onChangeText={username => this.setState({username})}
-                    />
+                        />
                     <TextInput 
+                        placeholderTextColor={"black"}
                         placeholder="Contraseña"
                         style={styles.input}
                         secureTextEntry={true}
@@ -84,8 +85,8 @@ export default class Login extends Component {
                         activeOpacity={0.7}
                         onPress={btnClickRegistro}
                     >
-                        <Text>¿Aún no tienes una cuenta?</Text>
-                        <Text style={{fontWeight:"bold"}}>¡Regístrate aquí!</Text>
+                        <Text style={styles.textoFooter1}>¿Aún no tienes una cuenta?</Text>
+                        <Text style={styles.textoFooter2}>¡Regístrate aquí!</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 
@@ -107,12 +108,12 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
     },
     btnEntrar:{
-        width:"45%",
+        width:"50%",
         height: "12%",
         alignSelf: "center",
         marginTop: 20,
-        backgroundColor:"#2081C3",
-        borderWidth:2,
+        backgroundColor:"#78D5D7",
+        // borderWidth:2,
         borderRadius: 8,
         justifyContent:"center",
         alignItems:"center",        
@@ -123,11 +124,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginHorizontal: 30,
         borderRadius: 8,
+        color:"black",
     },
     textoTitulo:{
         fontWeight:"bold",
         fontSize: 40,
-        color: "#000",
+        color: "black",
         textAlign: "center",
         fontFamily:"arial",
     },
@@ -142,14 +144,24 @@ const styles = StyleSheet.create({
         justifyContent:"center",
     },
     espacioLogin:{
-        flex: 1.8,
+        flex: 1.7,
     },
     footer:{
-        flex:0.2,
+        flex:0.3,
         justifyContent:"center",
-        backgroundColor:"#78D5D7"
+        backgroundColor:"#2081C3"
     }, 
     btnFooter:{
         alignItems:"center",
+    },
+    textoFooter1:{
+        fontSize:20,
+        color:"#F7F9F9",
+        // fontWeight:"bold",
+    },
+    textoFooter2:{
+        fontSize:20,
+        color:"#F7F9F9",
+        fontWeight:"bold",
     }
 })
