@@ -21,29 +21,76 @@ export default class Login extends Component {
     super(props);
     this.state = {
         // variables definition
-        username:"",
+        email:"",
         password:"",
+        datosServer:"",
     };
   }
 
   render() {
     // js programming for objects
-    const btnClickEntrar = () => {
-        this.props.navigation.navigate("Tienda");
-    }
     const btnClickRegistro = () => {
         this.props.navigation.navigate("SignIn");
     }
     
-    // Display pop up alert 
-    const badLoginalert = () =>
-    Alert.alert(
-        "Login invalido",
-        "Los datos introducidos son inválidos, intenta de nuevo.",
-        [
-            { text: "OK"}
-        ]
-    );
+    const validacion = () => {
+        if(this.state.email==""||this.state.password==""){
+            // desplegar alerta
+            Alert.alert(
+                "ERROR",
+                "Por favor ingresa tu correo y contraseña.",
+                [{ text: "OK"}]
+            );
+        }else{
+            logIn();
+        }
+    }
+
+    const logIn = () => {
+       
+        // save state to call it later inside other object's functions
+        let _this = this; 
+
+        var xhttp = new XMLHttpRequest(); // creates object for xmlhttp request
+
+        // defines what to do when readySate changes
+        xhttp.onreadystatechange = function() {
+            // If readyState=4 server is up and if status=200 succesfull request
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log(xhttp.responseText);  
+
+                // Valid login?
+                if (xhttp.responseText != "0"){
+                    console.log("LOGEADO");
+                    // save response and split it on array for each ","
+                    let datos= JSON.parse(xhttp.responseText);
+                    _this.setState({datosServer:datos}); // save object
+                    console.log("JSON recibido");   
+                    console.log(xhttp.responseText);   
+                    
+                    // go to next screen and send data 
+                    _this.props.navigation.navigate("Tienda",{name:_this.state.datosServer["name"],});
+                }
+                else
+                {
+                    // desplegar alerta
+                    Alert.alert(
+                        "ERROR",
+                        "Correo y/o contraseña incorrectos.",
+                        [{ text: "OK"}]
+                    );
+                    console.log("Credenciales incorrectas");
+                    console.log(xhttp.responseText);   
+                }
+                
+            }
+        };
+        
+        // defines the metod (get) // url where to go (dinamic with user input) // asynchronous process (true)
+        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/login.php?email="+this.state.email+"&password="+this.state.password, true);
+        xhttp.send(); // send the request defined above
+    }
     
     
     return (
@@ -60,8 +107,8 @@ export default class Login extends Component {
                         style={styles.input}
                         placeholder="Correo"
                         placeholderTextColor={"black"}
-                        // get input and save in var username
-                        onChangeText={username => this.setState({username})}
+                        // get input and save in var email
+                        onChangeText={email => this.setState({email})}
                         />
                     <TextInput 
                         placeholderTextColor={"black"}
@@ -74,7 +121,7 @@ export default class Login extends Component {
                     <TouchableOpacity
                             style={styles.btnEntrar}
                             activeOpacity={0.7}
-                            onPress={btnClickEntrar}
+                            onPress={validacion}
                     > 
                         <Text style={styles.textoBoton}> Entrar </Text>
                     </TouchableOpacity>
