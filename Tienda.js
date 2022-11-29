@@ -9,7 +9,8 @@ import {
     Alert,
     SafeAreaView,
     Dimensions,
-    FlatList
+    FlatList,
+    Image,
 } from 'react-native';
 
 // importar para navegar entre pantallas
@@ -38,9 +39,10 @@ export default class Tienda extends Component {
         var datos=JSON.parse(xhttp.responseText);
         _this.setState({datosServer:datos}); // save object
         console.log("JSON recibido");
+        // console.log(_this.state.datosServer);
       }
     };
-    xhttp.open("GET", "https://herradapinternet.000webhostapp.com/mostrarDatos.php", true);
+    xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/mostrarProductos.php", true);
     xhttp.send();
   }
 
@@ -48,37 +50,40 @@ export default class Tienda extends Component {
     
     const celda = ({item}) => {
         return(
-          <View style={styles.celdaContainer}>
             <TouchableOpacity 
-                // onPress={() => getItem(item.id,item.nombre,item.codigo,item.imagen)}
+                // onPress={() => this.props.navigation.navigate("DetallesProducto",{id:item.id,name:item.name,description:item.description,picture:item.picture,price:item.price,stock:item.stock,active:item.active})}
             >
-                <Text style={styles.celda}>id: {item.id}</Text>
-                <Text style={styles.celda}>nombre: {item.nombre}</Text>
-                <Text style={styles.celda}>codigo: {item.codigo}</Text>
-                <Text style={styles.celda}>tarea: {item.tarea}</Text>
-                <Text style={styles.celda}>imagen URL: {item.imagen}</Text>
+                <View style={styles.celdaContainer}>
+                    <View style={styles.productInfo}>
+                        <Text style={styles.celda}>ID: {item.id}</Text>
+                        <Text style={styles.celda}>Nombre: {item.name}</Text>
+                        <Text style={styles.celda}>Descripcion: {item.description}</Text>
+                        <Text style={styles.celda}>Precio: {item.price}</Text>
+                        <Text style={styles.celda}>Stock: {item.stock}</Text>
+                        <Text style={styles.celda}>Activo: {item.active}</Text>
+                    </View>
+                    <View style={styles.fotoContainer}>
+                        <Image
+                            style={{width:100,height:100,borderRadius:8}}
+                            source={{uri:item.picture}}
+                            // source={require(this.props.route.params.imagen)}
+                        />
+                    </View>
+                </View>
             </TouchableOpacity>
-          </View>
         )
       }
     
     
     // js programming for objects
-    const btnClick = () => {
+    const btnClickRegresar = () => {
+        this.props.navigation.navigate("Login");
+    }
+
+    const btnVerCarrito = () => {
         this.props.navigation.navigate("Confirmacion");
     }
-    
-    // Display pop up alert 
-    const badLoginalert = () =>
-    Alert.alert(
-        "Login invalido",
-        "Los datos introducidos son inválidos, intenta de nuevo.",
-        [
-            { text: "OK"}
-        ]
-    );
-    
-    
+        
     return (
         <SafeAreaView style={styles.background}>
             <ImageBackground
@@ -100,9 +105,16 @@ export default class Tienda extends Component {
                     <TouchableOpacity 
                         style={styles.btnFooter}
                         activeOpacity={0.7}
-                        onPress={btnClick}
+                        onPress={btnClickRegresar}
                     >
-                        <Text>Ordenar</Text>
+                        <Text style={styles.textoFooter}>Regresar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.btnFooter}
+                        activeOpacity={0.7}
+                        onPress={btnVerCarrito}
+                    >
+                        <Text style={styles.textoFooter}>Carrito</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 
@@ -126,39 +138,59 @@ const styles = StyleSheet.create({
     textoTitulo:{
         fontWeight:"bold",
         fontSize: 40,
-        color: "#000",
+        color: "#F7F9F9",
         textAlign: "center",
         fontFamily:"arial",
     },
     espacioTitulo:{
         flex: 2,
         justifyContent:"center",
-        backgroundColor:"#BED8D4"
+        backgroundColor:"#63D2FF"
     },
     espacioProductos:{
         flex: 7,
     },
     espacioFooter:{
         flex:1,
-        justifyContent:"center",
-        backgroundColor:"#78D5D7"
+        backgroundColor:"#2081C3",
+        flexDirection:"row",
+        // borderTopWidth:1,
     }, 
     btnFooter:{
+        flex:1,
+        justifyContent:"center",
         alignItems:"center",
+        // borderRightWidth:1,
+        // borderLeftWidth:1,
     },
     celdaContainer:{
         marginHorizontal:20,
         marginVertical:20,
-        borderWidth:2,
-        borderColor:"black",
+        // borderWidth:2,
+        // borderColor:"black",
         padding:10,
         borderRadius:15,
         flex:1,
-        backgroundColor: "#FFE3E1",
+        backgroundColor: "#78D5D7",
+        flexDirection:'row',
     },
     celda:{
-        fontSize:20,
+        fontSize:15,
         fontFamily:"serif",
-        color:"black",
+        color:"#F7F9F9",
+        // fontWeight:"bold",
     },
+    textoFooter:{
+        fontSize:30,
+        fontWeight:"bold",
+        color:"#F7F9F9"
+    },
+    productInfo:{
+        flex: 2,
+    },
+    fotoContainer:{
+        flex: 1,
+        justifyContent:"center",
+        alignContent:"center",
+    }
 })
