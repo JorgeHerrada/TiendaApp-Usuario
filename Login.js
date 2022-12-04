@@ -66,11 +66,11 @@ export default class Login extends Component {
                     // save response and split it on array for each ","
                     let datos= JSON.parse(xhttp.responseText);
                     _this.setState({datosServer:datos}); // save object
-                    console.log("JSON recibido");   
+                    console.log("JSON recibido: " + datos);   
                     console.log(xhttp.responseText);   
                     
                     // go to next screen and send data 
-                    _this.props.navigation.navigate("Tienda",{name:_this.state.datosServer["name"],});
+                    _this.props.navigation.navigate("Tienda",{name:_this.state.datosServer["name"],id:_this.state.datosServer["id"]});
                 }
                 else
                 {

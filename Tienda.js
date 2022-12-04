@@ -25,6 +25,7 @@ export default class Tienda extends Component {
         // variables definition
         datosServer:"",
         contadorArticulos:0,
+        carrito:[],
     };
   }
 
@@ -38,7 +39,7 @@ export default class Tienda extends Component {
         // save data from server on JS object
         var datos=JSON.parse(xhttp.responseText);
         _this.setState({datosServer:datos}); // save object
-        console.log("JSON recibido");
+        console.log("JSON recibido: " + datos);
         // console.log(_this.state.datosServer);
       }
     };
@@ -51,7 +52,28 @@ export default class Tienda extends Component {
     const celda = ({item}) => {
         return(
             <TouchableOpacity 
-                // onPress={() => this.props.navigation.navigate("DetallesProducto",{id:item.id,name:item.name,description:item.description,picture:item.picture,price:item.price,stock:item.stock,active:item.active})}
+                onPress={() => {
+                    Alert.alert(
+                        item.name,
+                        "¿Añadir a tu carrito?",
+                        [
+                            {
+                                text: "Cancelar",
+                                onPress: () => console.log("Cancelado"),
+                                style: "cancel"
+                            },
+                            {   
+                                text: "Agregar", 
+                                onPress: () => {
+                                    console.log("Agregado");
+                                    this.setState({contadorArticulos:this.state.contadorArticulos+1});
+                                    this.state.carrito.push(item.id);
+                                    console.log(this.state.carrito);
+                                }
+                            }
+                        ]
+                      );
+                }}
             >
                 <View style={styles.celdaContainer}>
                     <View style={styles.productInfo}>
@@ -72,7 +94,7 @@ export default class Tienda extends Component {
                 </View>
             </TouchableOpacity>
         )
-      }
+    }
     
     
     // js programming for objects
@@ -81,7 +103,7 @@ export default class Tienda extends Component {
     }
 
     const btnVerCarrito = () => {
-        this.props.navigation.navigate("Confirmacion");
+        this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
     }
         
     return (
@@ -90,6 +112,7 @@ export default class Tienda extends Component {
                 style={styles.background}
             >
                 <View style={styles.espacioTitulo}>
+                    <Text style={styles.textoTitulo}> Bienvenido, {this.props.route.params.name} </Text>
                     <Text style={styles.textoTitulo}> Selecciona tus productos </Text>
                 </View>
                 
@@ -114,7 +137,7 @@ export default class Tienda extends Component {
                         activeOpacity={0.7}
                         onPress={btnVerCarrito}
                     >
-                        <Text style={styles.textoFooter}>Carrito</Text>
+                        <Text style={styles.textoFooter}>Carrito ({this.state.contadorArticulos})</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 
