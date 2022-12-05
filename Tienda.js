@@ -26,6 +26,7 @@ export default class Tienda extends Component {
         datosServer:"",
         contadorArticulos:0,
         carrito:[],
+        total:0,
     };
   }
 
@@ -68,6 +69,7 @@ export default class Tienda extends Component {
                                     console.log("Agregado");
                                     this.setState({contadorArticulos:this.state.contadorArticulos+1});
                                     this.state.carrito.push(item.id);
+                                    this.setState({total:this.state.total+parseInt(item.price)})
                                     console.log(this.state.carrito);
                                 }
                             }
@@ -102,8 +104,26 @@ export default class Tienda extends Component {
         this.props.navigation.navigate("Login");
     }
 
-    const btnVerCarrito = () => {
-        this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
+    const btnOrdenar = () => {
+        Alert.alert(
+            "¿Ordenar?",
+            "Confirma tu compra y acepta cuando estes listo.",
+            [
+                {
+                    text: "Cancelar",
+                    onPress: () => console.log("Cancelado"),
+                    style: "cancel"
+                },
+                {   
+                    text: "Confirmar", 
+                    onPress: () => {
+                        console.log("Orden confirmada");
+                        console.log(this.state.carrito);
+                    }
+                }
+            ]
+          );
+        // this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
     }
         
     return (
@@ -112,8 +132,7 @@ export default class Tienda extends Component {
                 style={styles.background}
             >
                 <View style={styles.espacioTitulo}>
-                    <Text style={styles.textoTitulo}> Bienvenido, {this.props.route.params.name} </Text>
-                    <Text style={styles.textoTitulo}> Selecciona tus productos </Text>
+                    <Text style={styles.textoTitulo}> Carrito ({this.state.contadorArticulos}) </Text>
                 </View>
                 
                 <View style={styles.espacioProductos}>
@@ -135,9 +154,9 @@ export default class Tienda extends Component {
                     <TouchableOpacity 
                         style={styles.btnFooter}
                         activeOpacity={0.7}
-                        onPress={btnVerCarrito}
+                        onPress={btnOrdenar}
                     >
-                        <Text style={styles.textoFooter}>Carrito ({this.state.contadorArticulos})</Text>
+                        <Text style={styles.textoFooter}>Ordenar (${this.state.total}) </Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 
