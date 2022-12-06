@@ -11,6 +11,7 @@ import {
     Dimensions,
     FlatList,
     Image,
+    TextInput,
 } from 'react-native';
 
 // importar para navegar entre pantallas
@@ -26,6 +27,7 @@ export default class Confirmacion extends Component {
             datosServer:"",
             contadorArticulos:0,
             carrito:[],
+            deliveryAddress:"",
         };
     }
 
@@ -102,7 +104,24 @@ export default class Confirmacion extends Component {
     }
 
     const btnConfirmar = () => {
-        
+        // guarda direccion de entrega en registro de la orden actual en la base de datos
+        let _this = this;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            console.log("Petición enviada a servidor");
+            if (this.readyState == 4 && this.status == 200) {
+                // se realizó con éxito la insersion?
+                if(xhttp.responseText != 0){
+                    // guardamos orderID de la insercion
+                    console.warn("Direccion de entrega actualizada");
+                }else{
+                    console.log("No se pudo guardar la direccion de entrega");
+                }
+            }
+        };
+        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/updateDeliveryAddress.php?deliveryAddress=" + this.state.deliveryAddress + "&orderID="+this.props.route.params.orderID , true);
+        console.log("http://tiendapp.freevar.com/tiendappScrips/updateDeliveryAddress.php?deliveryAddress=" + this.state.deliveryAddress + "&orderID="+this.props.route.params.orderID);
+        xhttp.send();
     }
 
         
@@ -113,6 +132,16 @@ export default class Confirmacion extends Component {
             >
                 <View style={styles.espacioTitulo}>
                     <Text style={styles.textoTitulo}> Carrito ${this.props.route.params.total}.00 </Text>
+                </View>
+
+                <View>
+                    <TextInput 
+                        style={styles.input}
+                        placeholder="Dirección de Entrega"
+                        placeholderTextColor={"black"}
+                        // get input and save in var email
+                        onChangeText={deliveryAddress => this.setState({deliveryAddress})}
+                    />
                 </View>
                 
                 <View style={styles.espacioProductos}>
@@ -214,5 +243,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent:"center",
         alignContent:"center",
-    }
+    },
+    input:{
+        borderWidth: 2,
+        fontSize: 25,
+        marginTop: 10,
+        marginHorizontal: 30,
+        borderRadius: 8,
+        color:"black",
+    },
 })
