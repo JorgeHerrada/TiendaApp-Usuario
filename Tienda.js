@@ -128,6 +128,7 @@ export default class Tienda extends Component {
                 xhttp.send();
             }
 
+            this.props.navigation.navigate("Confirmacion",{orderID:this.state.orderID,total:this.state.total});
         }else{
             console.warn("Error, no hay orderID: " + this.setState.orderID);
         }
@@ -135,7 +136,7 @@ export default class Tienda extends Component {
 
     const btnOrdenar = () => {
         if(this.state.ordenAplicada == 1){
-            // this.props.navigation.navigate("Confirmacion");
+            this.props.navigation.navigate("Confirmacion",{orderID:this.state.orderID,total:this.state.total});
             console.warn("La orden ya ha sido aplicada.");
         } else {
             Alert.alert(
@@ -224,7 +225,7 @@ export default class Tienda extends Component {
                         activeOpacity={0.7}
                         onPress={btnOrdenar}
                     >
-                        <Text style={styles.textoFooter}>Ordenar (${this.state.total}) </Text>
+                        <Text style={styles.textoFooter}>Ordenar (${this.state.total}.00) </Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 

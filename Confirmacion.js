@@ -29,11 +29,6 @@ export default class Confirmacion extends Component {
         };
     }
 
-    
-    arreglarDatos() {
-        console.log("Hola");
-    };
-
     // ejecuta cada que se carga la vista
     componentDidMount(){
         let _this = this;
@@ -45,11 +40,9 @@ export default class Confirmacion extends Component {
                 var datos=JSON.parse(xhttp.responseText);
                 _this.setState({datosServer:datos}); // save object
                 console.log("JSON recibido: " + datos[0]["id"]);
-                // console.log(_this.state.datosServer);
-                arreglarDatos();
             }
         };
-        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/mostrarProductos.php", true);
+        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/mostrarCarrito.php?orderID="+this.props.route.params.orderID, true);
         xhttp.send();
     }
 
@@ -60,29 +53,30 @@ export default class Confirmacion extends Component {
     const celda = ({item}) => {
         return(
             <TouchableOpacity 
-                onPress={() => {
-                    Alert.alert(
-                        item.name,
-                        "¿Añadir a tu carrito?",
-                        [
-                            {
-                                text: "Cancelar",
-                                onPress: () => console.log("Cancelado"),
-                                style: "cancel"
-                            },
-                            {   
-                                text: "Eliminar", 
-                                onPress: () => {
-                                    console.log("Eliminado");
-                                }
-                            }
-                        ]
-                      );
-                }}
+                // onPress={() => {
+                //     //Alerta para eliminación: PENDIENTE
+                //     Alert.alert(
+                //         item.name,
+                //         "¿Añadir a tu carrito?",
+                //         [
+                //             {
+                //                 text: "Cancelar",
+                //                 onPress: () => console.log("Cancelado"),
+                //                 style: "cancel"
+                //             },
+                //             {   
+                //                 text: "Eliminar", 
+                //                 onPress: () => {
+                //                     console.log("Eliminado");
+                //                 }
+                //             }
+                //         ]
+                //       );
+                // }}
             >
                 <View style={styles.celdaContainer}>
                     <View style={styles.productInfo}>
-                        <Text style={styles.celda}>ID: {item.id}</Text>
+                        <Text style={styles.celda}>ID: {item.productID}</Text>
                         <Text style={styles.celda}>Nombre: {item.name}</Text>
                         <Text style={styles.celda}>Descripcion: {item.description}</Text>
                         <Text style={styles.celda}>Precio: {item.price}</Text>
@@ -108,7 +102,7 @@ export default class Confirmacion extends Component {
     }
 
     const btnConfirmar = () => {
-        // this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
+        
     }
 
         
@@ -118,7 +112,7 @@ export default class Confirmacion extends Component {
                 style={styles.background}
             >
                 <View style={styles.espacioTitulo}>
-                    <Text style={styles.textoTitulo}> Carrito de: {this.props.route.params.name} </Text>
+                    <Text style={styles.textoTitulo}> Carrito ${this.props.route.params.total}.00 </Text>
                 </View>
                 
                 <View style={styles.espacioProductos}>
