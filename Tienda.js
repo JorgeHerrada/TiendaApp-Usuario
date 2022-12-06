@@ -27,6 +27,8 @@ export default class Tienda extends Component {
         contadorArticulos:0,
         carrito:[],
         total:0,
+        orderID:"",
+        ordenAplicada:0,
     };
   }
 
@@ -98,32 +100,98 @@ export default class Tienda extends Component {
         )
     }
     
-    
     // js programming for objects
     const btnClickRegresar = () => {
         this.props.navigation.navigate("Login");
     }
 
-    const btnOrdenar = () => {
-        Alert.alert(
-            "¿Ordenar?",
-            "Confirma tu compra y acepta cuando estes listo.",
-            [
-                {
-                    text: "Cancelar",
-                    onPress: () => console.log("Cancelado"),
-                    style: "cancel"
-                },
-                {   
-                    text: "Confirmar", 
-                    onPress: () => {
-                        console.log("Orden confirmada");
-                        console.log(this.state.carrito);
+    const insertarProductInOrder = () => {
+        if(this.state.orderID != ""){
+            console.log("Enviando datos para guardar productsInOrder: " + this.state.carrito);
+
+            for (const prodID of this.state.carrito){
+                //mandando orden a servidor
+                let _this = this;
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    console.log("Petición enviada a servidor");
+                    if (this.readyState == 4 && this.status == 200) {
+                        // se realizó con éxito la insersion?
+                        if(xhttp.responseText != 0){
+                            console.log("ID producto insertado: "+prodID+"en orden: "+_this.state.orderID);
+                        }else{
+                            console.log("No se pudo insertar, respuesta: " + xhttp.responseText);
+                        }
                     }
-                }
-            ]
-          );
-        // this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
+                };
+                xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/altasProductInOrder.php?orderID="+this.state.orderID+"&productID="+prodID , true);
+                xhttp.send();
+            }
+
+        }else{
+            console.warn("Error, no hay orderID: " + this.setState.orderID);
+        }
+    }
+
+    const btnOrdenar = () => {
+        if(this.state.ordenAplicada == 1){
+            // this.props.navigation.navigate("Confirmacion");
+            console.warn("La orden ya ha sido aplicada.");
+        } else {
+            Alert.alert(
+                "¿Ordenar?",
+                "Confirma tu compra y acepta cuando estes listo.",
+                [
+                    {
+                        text: "Cancelar",
+                        onPress: () => console.log("Cancelado"),
+                        style: "cancel"
+                    },
+                    {   
+                        text: "Confirmar", 
+                        onPress: () => {
+                            if(this.state.contadorArticulos>0){
+                                
+                                console.log("Orden confirmada");
+                                console.log(this.state.carrito);
+                                
+                                //mandando orden a servidor
+                                let _this = this;
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.onreadystatechange = function() {
+                                    console.log("Petición enviada a servidor");
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        // se realizó con éxito la insersion?
+                                        if(xhttp.responseText != 0){
+                                            // guardamos orderID de la insercion
+                                            _this.setState({orderID:xhttp.responseText}); 
+                                            console.log("ID orden insertado: " + _this.state.orderID);
+                                            insertarProductInOrder();
+                                            _this.setState({ordenAplicada:1});
+                                        }else{
+                                            console.log("No se pudo insertar, respuesta: " + xhttp.responseText);
+                                        }
+                                    }
+                                };
+                                xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/altasOrden.php?deliveryAddress="+""+"&nProducts="+this.state.contadorArticulos+"&total="+this.state.total+"&userID="+this.props.route.params.id , true);
+                                console.log("http://tiendapp.freevar.com/tiendappScrips/altasOrden.php?deliveryAddress="+""+"&nProducts="+this.state.contadorArticulos+"&total="+this.state.total+"&userID="+this.props.route.params.id);
+                                xhttp.send();
+                            }else{
+                                // desplegar alerta
+                                Alert.alert(
+                                    "Carrito Vacío",
+                                    "Ingresa algún producto a tu carrito.",
+                                    [{ text: "OK"}]
+                                );
+                                console.log("Carrito vacio");
+                            }
+                                
+                        }
+                    }
+                ]
+            );
+                    // this.props.navigation.navigate("Confirmacion",{carrito:this.state.carrito,count:this.state.contadorArticulos,id:this.props.route.params.id,name:this.props.route.params.name});
+        }
     }
         
     return (
