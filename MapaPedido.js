@@ -11,7 +11,6 @@ import {
     Dimensions,
     FlatList,
     Image,
-    TextInput,
 } from 'react-native';
 
 // importar para navegar entre pantallas
@@ -19,66 +18,44 @@ import { useNavigation } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 
 // export default class Login extends Component {
-export default class Confirmacion extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            // variables definition
-            datosServer:"",
-            contadorArticulos:0,
-            carrito:[],
-            deliveryAddress:"",
-        };
-    }
+export default class MapaPedido extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        // variables definition
+        datosServer:"",
+        contadorArticulos:0,
+    };
+  }
 
-    // ejecuta cada que se carga la vista
-    componentDidMount(){
-        let _this = this;
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            console.log("Petición enviada a servidor");
-            if (this.readyState == 4 && this.status == 200) {
-                // save data from server on JS object
-                var datos=JSON.parse(xhttp.responseText);
-                _this.setState({datosServer:datos}); // save object
-                console.log("JSON recibido: " + datos[0]["id"]);
-            }
-        };
-        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/mostrarCarrito.php?orderID="+this.props.route.params.orderID, true);
-        xhttp.send();
-    }
-
-  
+  // ejecuta cada que se carga la vista
+//   componentDidMount(){
+//     let _this = this;
+//     var xhttp = new XMLHttpRequest();
+//     xhttp.onreadystatechange = function() {
+//       console.log("Petición enviada a servidor");
+//       if (this.readyState == 4 && this.status == 200) {
+//         // save data from server on JS object
+//         var datos=JSON.parse(xhttp.responseText);
+//         _this.setState({datosServer:datos}); // save object
+//         console.log("JSON recibido");
+//         // console.log(_this.state.datosServer);
+//       }
+//     };
+//     xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/mostrarProductos.php", true);
+//     xhttp.send();
+//   }
 
   render() {
     
     const celda = ({item}) => {
         return(
             <TouchableOpacity 
-                // onPress={() => {
-                //     //Alerta para eliminación: PENDIENTE
-                //     Alert.alert(
-                //         item.name,
-                //         "¿Añadir a tu carrito?",
-                //         [
-                //             {
-                //                 text: "Cancelar",
-                //                 onPress: () => console.log("Cancelado"),
-                //                 style: "cancel"
-                //             },
-                //             {   
-                //                 text: "Eliminar", 
-                //                 onPress: () => {
-                //                     console.log("Eliminado");
-                //                 }
-                //             }
-                //         ]
-                //       );
-                // }}
+                onPress={() => this.props.navigation.navigate("DetallesProducto",{id:item.id,name:item.name,description:item.description,picture:item.picture,price:item.price,stock:item.stock,active:item.active})}
             >
                 <View style={styles.celdaContainer}>
                     <View style={styles.productInfo}>
-                        <Text style={styles.celda}>ID: {item.productID}</Text>
+                        <Text style={styles.celda}>ID: {item.id}</Text>
                         <Text style={styles.celda}>Nombre: {item.name}</Text>
                         <Text style={styles.celda}>Descripcion: {item.description}</Text>
                         <Text style={styles.celda}>Precio: {item.price}</Text>
@@ -103,8 +80,8 @@ export default class Confirmacion extends Component {
         this.props.navigation.goBack();
     }
 
-    const btnConfirmar = () => {
-        // guarda direccion de entrega en registro de la orden actual en la base de datos
+    const btnEntregado = () => {
+        // update repartidorID al pedido
         let _this = this;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -112,17 +89,21 @@ export default class Confirmacion extends Component {
             if (this.readyState == 4 && this.status == 200) {
                 // se realizó con éxito la insersion?
                 if(xhttp.responseText != 0){
-                    // guardamos orderID de la insercion
-                    _this.props.navigation.navigate("MapaPedido",{orderID:_this.props.route.params.orderID});
+                    Alert.alert(
+                        "Pedido Recibido",
+                        "¡Muchas gracias por comprar con TiendaAPP! :)",
+                        [{ text: "OK"}]
+                    );
+                    _this.props.navigation.navigate("Login");
                 }else{
-                    console.log("No se pudo guardar la direccion de entrega");
+                    console.log("No se pudo hacer el update, respuesta: " + xhttp.responseText);
                 }
             }
         };
-        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/updateDeliveryAddress.php?deliveryAddress=" + this.state.deliveryAddress + "&orderID="+this.props.route.params.orderID , true);
+        xhttp.open("GET", "http://tiendapp.freevar.com/tiendappScrips/updateOrdenEntregada.php?orderID="+this.props.route.params.orderID, true);
         xhttp.send();
-    }
 
+    }
         
     return (
         <SafeAreaView style={styles.background}>
@@ -130,26 +111,17 @@ export default class Confirmacion extends Component {
                 style={styles.background}
             >
                 <View style={styles.espacioTitulo}>
-                    <Text style={styles.textoTitulo}> Carrito ${this.props.route.params.total}.00 </Text>
-                </View>
-
-                <View>
-                    <TextInput 
-                        style={styles.input}
-                        placeholder="Dirección de Entrega"
-                        placeholderTextColor={"black"}
-                        // get input and save in var email
-                        onChangeText={deliveryAddress => this.setState({deliveryAddress})}
-                    />
+                    <Text style={styles.textoTitulo}> Ruta de entrega </Text>
                 </View>
                 
                 <View style={styles.espacioProductos}>
-                    <FlatList
+                    <Text> Aquí debería de estar el mapa :'C </Text>
+                    {/* <FlatList
                         data={this.state.datosServer}
                         renderItem={celda}
                         keyExtractor={(item,index) => index.toString()}
                         style={styles.flatList}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.espacioFooter}>
                     <TouchableOpacity 
@@ -162,9 +134,9 @@ export default class Confirmacion extends Component {
                     <TouchableOpacity 
                         style={styles.btnFooter}
                         activeOpacity={0.7}
-                        onPress={btnConfirmar}
+                        onPress={btnEntregado}
                     >
-                        <Text style={styles.textoFooter}>Confirmar</Text>
+                        <Text style={styles.textoFooter}>¡Recibido!</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground> 
@@ -242,13 +214,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent:"center",
         alignContent:"center",
-    },
-    input:{
-        borderWidth: 2,
-        fontSize: 25,
-        marginTop: 10,
-        marginHorizontal: 30,
-        borderRadius: 8,
-        color:"black",
-    },
+    }
 })

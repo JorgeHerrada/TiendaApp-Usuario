@@ -8,6 +8,7 @@ import SIGNIN from "./SignIn";
 import TIENDA from "./Tienda";
 import CONFIRMACION from "./Confirmacion";
 import PROGRESO from "./Progreso";
+import MAPAPEDIDO from './MapaPedido';
 
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,11 @@ function App() {
         <Stack.Screen 
           name="Progreso" 
           component={PROGRESO} 
+          options={{ headerShown: false }} // header wont show
+        />
+        <Stack.Screen 
+          name="MapaPedido" 
+          component={MAPAPEDIDO} 
           options={{ headerShown: false }} // header wont show
         />
         
